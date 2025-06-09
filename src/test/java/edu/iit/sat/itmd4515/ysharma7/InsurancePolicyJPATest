@@ -1,0 +1,243 @@
+package edu.iit.sat.itmd4515.ysharma7;
+
+import edu.iit.sat.itmd4515.ysharma7.domain.*;
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+/**
+ * JUnit test for persisting and querying InsurancePolicy entities with JPA.  
+ * @author yashica
+ */
+public class InsurancePolicyJPATest {
+    private static EntityManagerFactory emf;
+    private EntityManager em;
+    private EntityTransaction tx;
+    private Customer testCustomer;
+    private InsurancePolicy initialPolicy;
+
+    @BeforeAll
+    public static void beforeAll() {
+        emf = Persistence.createEntityManagerFactory("itmd4515testPU");
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        em = emf.createEntityManager();
+        tx = em.getTransaction();
+        
+        tx.begin();
+        testCustomer = new Customer("Test Customer", "test@example.com");
+        em.persist(testCustomer);
+        tx.commit();
+        
+        initialPolicy = new InsurancePolicy();
+        initialPolicy.setCustomer(testCustomer);
+        initialPolicy.setCoverageAmount(220.00);
+        initialPolicy.setStartDate(LocalDate.now());
+        initialPolicy.setEndDate(LocalDate.of(2027, Month.MARCH, 11));
+        initialPolicy.setPolicyType(PolicyType.HEALTH);
+        tx.begin();
+        em.persist(initialPolicy);
+        tx.commit();
+    }
+
+    @Test
+    public void createTest() {
+        InsurancePolicy ip = new InsurancePolicy();
+        ip.setCustomer(testCustomer);
+        ip.setCoverageAmount(3786.00);
+        ip.setStartDate(LocalDate.now());
+        ip.setEndDate(LocalDate.of(2028, Month.DECEMBER, 24));
+        ip.setPolicyType(PolicyType.HOME);
+        tx.begin();
+        em.persist(ip);
+        tx.commit();
+
+        assertNotNull(ip.getPolicyId());
+        assertTrue(ip.getPolicyId() > 0);
+
+        tx.begin();
+        em.remove(em.find(InsurancePolicy.class, ip.getPolicyId()));
+        tx.commit();
+    }
+
+    @Test
+    public void readTest() {
+        InsurancePolicy ip = new InsurancePolicy();
+        ip.setCustomer(testCustomer);
+        ip.setCoverageAmount(1500.00);
+        ip.setStartDate(LocalDate.now());
+        ip.setEndDate(LocalDate.of(2025, Month.JUNE, 15));
+        ip.setPolicyType(PolicyType.LIFE);
+        tx.begin();
+        em.persist(ip);
+        tx.commit();
+
+        InsurancePolicy fromDb = em.find(InsurancePolicy.class, ip.getPolicyId());
+        assertNotNull(fromDb);
+        assertEquals(testCustomer.getName(), fromDb.getCustomer().getName());
+        assertEquals(1500.00, fromDb.getCoverageAmount(), 0.01);
+        assertEquals(PolicyType.LIFE, fromDb.getPolicyType());
+
+        tx.begin();
+        em.remove(fromDb);
+        tx.commit();
+    }
+
+    @Test
+    public void updateTest() {
+        InsurancePolicy ip = new InsurancePolicy();
+        ip.setCustomer(testCustomer);
+        ip.setCoverageAmount(2359.00);
+        ip.setStartDate(LocalDate.now());
+        ip.setEndDate(LocalDate.of(2026, Month.APRIL, 5));
+        ip.setPolicyType(PolicyType.HOME);
+        tx.begin();
+        em.persist(ip);
+        tx.commit();
+
+        assertTrue(ip.getPolicyId() > 0);
+
+        tx.begin();
+        ip.setPolicyType(PolicyType.LIFE);
+        em.merge(ip);
+        tx.commit();
+
+        InsurancePolicy updated = em.find(InsurancePolicy.class, ip.getPolicyId());
+        assertNotNull(updated);
+        assertEquals(PolicyType.LIFE, updated.getPolicyType());
+
+        tx.begin();
+        em.remove(updated);
+        tx.commit();
+    }
+
+    @Test
+    public void deleteTest() {
+        InsurancePolicy ip = new InsurancePolicy();
+        ip.setCustomer(testCustomer);
+        ip.setCoverageAmount(3000.00);
+        ip.setStartDate(LocalDate.now());
+        ip.setEndDate(LocalDate.of(2028, Month.DECEMBER, 20));
+        ip.setPolicyType(PolicyType.HEALTH);
+        tx.begin();
+        em.persist(ip);
+        tx.commit();
+
+        assertNotNull(em.find(InsurancePolicy.class, ip.getPolicyId()));
+
+        tx.begin();
+        em.remove(em.find(InsurancePolicy.class, ip.getPolicyId()));
+        tx.commit();
+
+        assertNull(em.find(InsurancePolicy.class, ip.getPolicyId()));
+    }
+
+    @Test
+    public void unidirectionalPolicyToClaimTest() {
+        tx.begin();
+        Agent agent = new Agent();
+        agent.setName("Alysa");
+        em.persist(agent);
+
+        Claim claim = new Claim(1000.0, LocalDate.now());
+        claim.setAssignedAgent(agent);
+        em.persist(claim);
+        tx.commit();
+
+        InsurancePolicy ip = new InsurancePolicy();
+        ip.setCustomer(testCustomer);
+        ip.setCoverageAmount(5000.0);
+        ip.setStartDate(LocalDate.now());
+        ip.setEndDate(LocalDate.now().plusYears(1));
+        ip.setPolicyType(PolicyType.HEALTH);
+        ip.addClaim(claim);
+
+        tx.begin();
+        em.persist(ip);
+        tx.commit();
+
+        InsurancePolicy fromDb = em.find(InsurancePolicy.class, ip.getPolicyId());
+        assertNotNull(fromDb);
+        assertEquals(1, fromDb.getClaims().size());
+
+        tx.begin();
+        em.remove(em.find(InsurancePolicy.class, ip.getPolicyId()));
+        em.remove(em.find(Claim.class, claim.getClaimId()));
+        em.remove(em.find(Agent.class, agent.getAgentId()));
+        tx.commit();
+    }
+
+    @Test
+    public void bidirectionalCustomerToPolicyTest() {
+        Customer cust = new Customer("SRK", "srk@example.com");
+        tx.begin();
+        em.persist(cust);
+        tx.commit();
+
+        InsurancePolicy p1 = new InsurancePolicy();
+        p1.setCustomer(cust);
+        p1.setCoverageAmount(10000.0);
+        p1.setStartDate(LocalDate.now());
+        p1.setEndDate(LocalDate.now().plusYears(2));
+        p1.setPolicyType(PolicyType.CAR);
+        cust.addPolicy(p1);
+
+        InsurancePolicy p2 = new InsurancePolicy();
+        p2.setCustomer(cust);
+        p2.setCoverageAmount(20000.0);
+        p2.setStartDate(LocalDate.now());
+        p2.setEndDate(LocalDate.now().plusYears(3));
+        p2.setPolicyType(PolicyType.HOME);
+        cust.addPolicy(p2);
+
+        tx.begin();
+        em.persist(p1);
+        em.persist(p2);
+        em.merge(cust);
+        tx.commit();
+
+        Customer fromDb = em.find(Customer.class, cust.getCustomerId());
+        assertNotNull(fromDb);
+        assertEquals(2, fromDb.getPolicies().size());
+
+        InsurancePolicy fromP1 = em.find(InsurancePolicy.class, p1.getPolicyId());
+        assertNotNull(fromP1);
+        assertEquals(fromDb, fromP1.getCustomer());
+
+        tx.begin();
+        em.remove(em.find(InsurancePolicy.class, p1.getPolicyId()));
+        em.remove(em.find(InsurancePolicy.class, p2.getPolicyId()));
+        em.remove(fromDb);
+        tx.commit();
+    }
+
+    @AfterEach
+    public void afterEach() {
+        tx.begin();
+        em.remove(em.find(InsurancePolicy.class, initialPolicy.getPolicyId()));
+        List<InsurancePolicy> policies = em.createQuery(
+            "SELECT p FROM InsurancePolicy p WHERE p.customer.customerId = :cid", InsurancePolicy.class)
+            .setParameter("cid", testCustomer.getCustomerId())
+            .getResultList();
+        for (InsurancePolicy p : policies) {
+            em.remove(p);
+        }
+        em.remove(em.find(Customer.class, testCustomer.getCustomerId()));
+        tx.commit();
+        em.close();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        emf.close();
+    }
+}
