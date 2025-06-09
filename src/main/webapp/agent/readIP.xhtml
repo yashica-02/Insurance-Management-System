@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="jakarta.faces.facelets"
+    xmlns:h="jakarta.faces.html"
+    template="/WEB-INF/templates/template.xhtml">
+
+  <ui:define name="title">Insurance Policy Details</ui:define>
+    <ui:define name="content">
+    <h:panelGrid columns="2" cellpadding="5">
+      
+      <h:outputText value="Policy ID:" />
+      <h:outputText value="#{agentInsurancePolicyController.insurancePolicy.policyId}" />
+
+      <h:outputText value="Coverage Amount:" />
+      <h:outputText value="#{agentInsurancePolicyController.insurancePolicy.coverageAmount}" />
+
+      <h:outputText value="Start Date:" />
+      <h:outputText value="#{agentInsurancePolicyController.insurancePolicy.startDate}" />
+
+      <h:outputText value="End Date:" />
+      <h:outputText value="#{agentInsurancePolicyController.insurancePolicy.endDate}" />
+
+      <h:outputText value="Policy Type:" />
+      <h:outputText value="#{agentInsurancePolicyController.insurancePolicy.policyType}" />
+
+    </h:panelGrid>
+
+  </ui:define>
+</ui:composition>

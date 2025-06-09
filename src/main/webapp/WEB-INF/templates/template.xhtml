@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:fn="jakarta.tags.functions"
+      xmlns:ui="jakarta.faces.facelets">
+  <h:head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title><ui:insert name="title">DEFAULT TITLE</ui:insert></title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/cerulean/bootstrap.min.css"
+          rel="stylesheet" />
+    <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+
+
+  </h:head>
+
+  <h:body class="bg-light">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark py-3 mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand fs-3" href="#">Insurance Policy Manager</a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarCollapse"
+                aria-controls="navbarCollapse"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <ui:fragment rendered="#{loginController.admin}">
+              <li class="nav-item">
+                <h:link outcome="/admin/welcome.xhtml"
+                        styleClass="#{fn:startsWith(view.viewId,'/admin/welcome.xhtml') ? 'nav-link active':'nav-link'}"
+                        value="Admin Dashboard"/>
+              </li>
+              <li class="nav-item">
+                <h:link outcome="/admin/customers.xhtml"
+                        styleClass="#{fn:startsWith(view.viewId,'/admin/customers.xhtml') ? 'nav-link active':'nav-link'}"
+                        value="Customer Controls"/>
+              </li>
+              <li class="nav-item">
+                <h:link outcome="/admin/agents.xhtml"
+                        styleClass="#{fn:startsWith(view.viewId,'/admin/agents.xhtml') ? 'nav-link active':'nav-link'}"
+                        value="Agent Controls"/>
+              </li>
+            </ui:fragment>
+            <ui:fragment rendered="#{loginController.agent}">
+              <li class="nav-item">
+                <h:link outcome="/agent/welcome.xhtml"
+                        styleClass="#{fn:startsWith(view.viewId,'/agent/welcome.xhtml') ? 'nav-link active':'nav-link'}"
+                        value="Agent Dashboard"/>
+              </li>
+            </ui:fragment>
+            <ui:fragment rendered="#{loginController.customer}">
+              <li class="nav-item">
+                <h:link outcome="/customer/welcome.xhtml"
+                        styleClass="#{fn:startsWith(view.viewId,'/customer/welcome.xhtml') ? 'nav-link active':'nav-link'}"
+                        value="My Dashboard"/>
+              </li>
+            </ui:fragment>
+          </ul>
+          <h:form class="d-flex">
+            <h:commandButton styleClass="btn btn-outline-success"
+                             value="Logout"
+                             action="#{loginController.doLogout()}"/>
+          </h:form>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container">
+      <ui:insert name="content">DEFAULT CONTENT</ui:insert>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+            crossorigin="anonymous"></script>
+  </h:body>
+</html>

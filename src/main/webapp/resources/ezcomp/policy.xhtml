@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+    
+    <cc:interface>
+        <cc:attribute name="operation" required="true" type="java.lang.String" shortDescription="One of create, read, update, or delete." />
+        <cc:attribute name="policy" required="false" type="edu.iit.sat.itmd4515.ysharma7.domain.InsurancePolicy" shortDescription="The policy model to use is the CC." />
+        <cc:attribute name="formAction" required="false" method-signature="java.lang.String methodName()" />
+    </cc:interface>
+    
+    
+    <cc:implementation>
+        <h:form>
+            <h:panelGrid columns="2" cellpadding="8">
+                <ui:fragment rendered="#{not cc.attrs.operation.equalsIgnoreCase('create')}">
+                    <h:outputLabel for="policyId" value="Policy ID:" />
+                </ui:fragment>
+                <ui:fragment rendered="#{not cc.attrs.operation.equalsIgnoreCase('create')}">
+                    <h:inputText id="policyId"
+                        value="#{cc.attrs.policy.policyId}"
+                        disabled="#{cc.attrs.operation.equalsIgnoreCase('edit')}"
+                        required="true" />
+                </ui:fragment>
+                
+                <ui:fragment rendered="#{cc.attrs.operation.equalsIgnoreCase('create')}">
+                    <h:outputLabel for="customer" value="Customer:"/>
+                    </ui:fragment>
+                <ui:fragment rendered="#{cc.attrs.operation.equalsIgnoreCase('create')}">
+                    <h:selectOneMenu id="customer"
+                                     value="#{agentInsurancePolicyController.insurancePolicy.customer}"
+                                     required="true">
+                      <f:selectItem itemLabel="-- Select Customer --" itemValue="#{null}" />
+                      <f:selectItems value="#{agentInsurancePolicyController.customers}"
+                                     var="c"
+                                     itemValue="#{c}"
+                                     itemLabel="#{c.name}" />
+                      <f:converter converterId="customerConverter"/>
+                    </h:selectOneMenu>
+                  </ui:fragment>
+                
+                <h:outputLabel for="coverageAmount" value="Coverage Amount:" />
+                <h:inputText 
+                    disabled="#{cc.attrs.operation.equalsIgnoreCase('delete')}"
+                    readonly="#{cc.attrs.operation.equalsIgnoreCase('delete')}"
+                    id="coverageAmount" value="#{cc.attrs.policy.coverageAmount}" required="true" />
+
+                <h:outputLabel for="startDate" value="Start Date (YYYY-MM-DD):" />
+                <h:inputText  
+                    disabled="#{cc.attrs.operation.equalsIgnoreCase('delete')}"
+                    readonly="#{cc.attrs.operation.equalsIgnoreCase('delete')}"
+                    id="startDate" value="#{cc.attrs.policy.startDate}" required="true" >
+                    <f:converter converterId="localDateConverter"/>
+                </h:inputText>
+
+                <h:outputLabel for="endDate" value="End Date (YYYY-MM-DD):" />
+                <h:inputText  
+                    disabled="#{cc.attrs.operation.equalsIgnoreCase('delete')}"
+                    readonly="#{cc.attrs.operation.equalsIgnoreCase('delete')}"
+                    id="endDate" value="#{cc.attrs.policy.endDate}" required="true" >
+                <f:converter converterId="localDateConverter"/>
+                </h:inputText>
+
+                <h:outputLabel for="policyType" value="Policy Type:" />
+                <h:selectOneMenu
+                      disabled="#{cc.attrs.operation.equalsIgnoreCase('delete')}"
+                    id="policyType"
+                    value="#{agentInsurancePolicyController.insurancePolicy.policyType}"
+                    required="true">
+                  <f:selectItem itemLabel="-- Select Type --" itemValue="#{null}" />
+                  <f:selectItems
+                      value="#{agentInsurancePolicyController.policyTypes}"
+                      var="type"
+                      itemValue="#{type}"
+                      itemLabel="#{type.name()}" />
+                </h:selectOneMenu>
+
+
+            </h:panelGrid>
+
+            <h:commandButton  rendered="#{cc.attrs.operation.equalsIgnoreCase('create')}" value="Create Policy" action="#{cc.attrs.formAction}" />
+            <h:commandButton  rendered="#{cc.attrs.operation.equalsIgnoreCase('edit')}" value="Edit Policy" action="#{cc.attrs.formAction}" />
+            <h:commandButton  rendered="#{cc.attrs.operation.equalsIgnoreCase('delete')}" value="Delete Policy" action="#{cc.attrs.formAction}" />
+
+            
+        </h:form>
+    </cc:implementation>
+    
+</html>

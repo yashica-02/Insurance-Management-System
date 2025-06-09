@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                template="../WEB-INF/templates/template.xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:fn="jakarta.tags.functions">
+
+    <ui:define name="title">
+        Agent Welcome Page
+    </ui:define>
+
+    <ui:define name="content">
+        <p>Welcome #{LoginController.getAuthenticatedUser}! Below is a list of your Insurance Policies. Use the button below to create a new policy.</p>
+
+        <div class="table-responsive">
+            <h:dataTable value="#{AgentWelcomeController.agent.policies}"
+                         var="policy"
+                         styleClass="table table-striped table-hover align-middle">
+                         
+                <h:column>
+                    <f:facet name="header">Policy ID</f:facet>
+                    <h:outputText value="#{policy.policyId}" />
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">Coverage Amount</f:facet>
+                    <h:outputText value="#{policy.coverageAmount}">
+                        <f:convertNumber type="currency" />
+                    </h:outputText>
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">Start Date</f:facet>
+                    <h:outputText value="#{policy.startDate.toString()}" />
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">End Date</f:facet>
+                    <h:outputText value="#{policy.endDate.toString()}" />
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">Policy Type</f:facet>
+                    <h:outputText value="#{policy.policyType}" />
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">Customer (Policy Holder)</f:facet>
+                    <h:outputText value="#{policy.customer.name}" />
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">Agents</f:facet>
+                    <ui:repeat value="#{policy.agents}" var="agent">
+                        <h:outputText value="#{agent.name}" /><br/>
+                    </ui:repeat>
+                </h:column>
+                
+                <h:column>
+                    <h:form>
+                        <h:commandButton value="read" action="#{agentInsurancePolicyController.displayReadIPPage(policy)}" styleClass="btn btn-outline-primary btn-sm me-2"/>
+                        <h:commandButton value="update" action="#{agentInsurancePolicyController.displayEditIPPage(policy)}" styleClass="btn btn-outline-primary btn-sm me-2"/>
+                        <h:commandButton value="delete" action="#{agentInsurancePolicyController.displayDeleteIPPage(policy)}" styleClass="btn btn-outline-danger btn-sm me-1"/>
+                    </h:form>
+                </h:column>
+            </h:dataTable>
+        </div>
+        
+        <div class="mb-4 text-end">
+            <h:form styleClass="d-inline">
+              <h:commandButton
+                value="Create Policy (Existing Customer)"
+                action="#{agentInsurancePolicyController.displayCreateIPPage}"
+                styleClass="btn btn-success me-2" />
+            </h:form>
+
+            <h:form styleClass="d-inline">
+              <h:commandButton
+                value="Create Policy (New Customer)"
+                action="#{customerController.displayCreateCustomerPage}"
+                styleClass="btn btn-primary" />
+            </h:form>
+          </div>
+
+        
+    </ui:define>
+
+</ui:composition>

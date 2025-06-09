@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:ui="jakarta.faces.facelets"
+    template="/WEB-INF/templates/template.xhtml">
+
+  <ui:define name="title">Edit Agent</ui:define>
+
+  <ui:define name="content">
+    <div class="card shadow mb-4">
+      <div class="card-body">
+
+        <h2 class="card-title mb-4">Edit Agent</h2>
+
+        <h:form id="editAgentForm">
+          <h:messages globalOnly="true" styleClass="text-danger mb-3"/>
+
+          <div class="row mb-4">
+            <label for="name" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-10">
+              <h:inputText id="name"
+                           value="#{adminAgentController.newAgent.name}"
+                           required="true"
+                           styleClass="form-control"/>
+              <h:message for="name" styleClass="form-text text-danger"/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-10 offset-sm-2">
+              <h:commandButton value="Update"
+                               action="#{adminAgentController.updateAgent}"
+                               styleClass="btn btn-primary me-2"/>
+              <h:commandButton value="Cancel"
+                               action="agents.xhtml?faces-redirect=true"
+                               immediate="true"
+                               styleClass="btn btn-secondary"/>
+            </div>
+          </div>
+        </h:form>
+      </div>
+    </div>
+  </ui:define>
+</ui:composition>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="jakarta.faces.facelets"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    template="/WEB-INF/templates/template.xhtml">
+
+  <ui:define name="title">Admin Welcome Page</ui:define>
+
+  <ui:define name="content">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h2 class="m-0 fw-bold text-primary">Welcome, Administrator</h2>
+      </div>
+      <div class="card-body">
+        <p class="mb-4">
+          This is the administrator portion of the application. Here, admins can manage policies, agents, and customers.
+        </p>
+
+        <h:dataTable 
+            value="#{InsurancePolicyService.readAll()}" 
+            var="policy"
+            styleClass="table table-striped table-hover">
+
+          <h:column>
+            <f:facet name="header">Policy ID</f:facet>
+            <h:outputText value="#{policy.policyId}" />
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Coverage Amount</f:facet>
+            <h:outputText value="#{policy.coverageAmount}">
+              <f:convertNumber type="currency" />
+            </h:outputText>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Start Date</f:facet>
+            <h:outputText value="#{policy.startDate.toString()}">
+                    <f:convertDateTime pattern="MMM dd, yyyy" />
+                </h:outputText>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">End Date</f:facet>
+            <h:outputText value="#{policy.endDate.toString()}">
+                    <f:convertDateTime pattern="MMM dd, yyyy" />
+                </h:outputText>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Policy Type</f:facet>
+            <h:outputText value="#{policy.policyType}"/>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Customer Name</f:facet>
+            <h:outputText value="#{policy.customer.name}"/>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Customer Username</f:facet>
+            <h:outputText value="#{policy.customer.user.username}"/>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Total Claims</f:facet>
+            <h:outputText value="#{policy.claims.size()}"/>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Agents</f:facet>
+            <ui:repeat value="#{policy.agents}" var="agent">
+              <span class="badge bg-secondary me-1">#{agent.name}</span>
+            </ui:repeat>
+          </h:column>
+
+        </h:dataTable>
+      </div>
+    </div>
+  </ui:define>
+
+</ui:composition>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:ui="jakarta.faces.facelets"
+    xmlns:f="jakarta.faces.core"
+    template="/WEB-INF/templates/template.xhtml">
+  <ui:define name="title">Manage Customers</ui:define>
+  <ui:define name="content">
+     <h:form id="customerListForm"  styleClass="d-inline">
+        <h:dataTable value="#{adminCustomerController.customers}" var="c"
+                     styleClass="table table-striped table-hover">
+          <h:column>
+            <f:facet name="header">ID</f:facet>
+            <h:outputText value="#{c.customerId}"/>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Name</f:facet>
+            <h:outputText value="#{c.name}"/>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Email</f:facet>
+            <h:outputText value="#{c.email}"/>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Username</f:facet>
+            <h:outputText value="#{c.user.username}"/>
+          </h:column>
+
+          <h:column>
+            <f:facet name="header">Actions</f:facet>
+            <h:commandLink value="Edit"
+                           action="#{adminCustomerController.prepareEdit(c)}"
+                           styleClass="btn btn-sm btn-primary me-2">
+              <f:ajax render="customerListForm"/>
+            </h:commandLink>
+            <h:commandLink value="Delete"
+                           action="#{adminCustomerController.deleteCustomer(c)}"
+                           onclick="return confirm('Delete this customer?');"
+                           styleClass="btn btn-sm btn-danger">
+              <f:ajax render="customerListForm"/>
+            </h:commandLink>
+          </h:column>
+
+        </h:dataTable>
+      </h:form>
+      <br/>
+      <h:form>
+        <h:commandButton value="Add New Customer"
+                         action="createCustomer.xhtml?faces-redirect=true"
+                         styleClass="btn btn-primary"/>
+      </h:form>
+  </ui:define>
+</ui:composition>

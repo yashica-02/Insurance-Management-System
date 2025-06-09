@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets"
+    template="/WEB-INF/templates/template.xhtml">
+
+  <ui:define name="title">Manage Agents</ui:define>
+  <ui:define name="content">
+
+  <h:form id="agentListForm">
+    <h:dataTable value="#{adminAgentController.agents}" var="a"
+                 styleClass="table table-striped table-hover">
+
+      <h:column>
+        <f:facet name="header">ID</f:facet>
+        <h:outputText value="#{a.agentId}"/>
+      </h:column>
+
+      <h:column>
+        <f:facet name="header">Name</f:facet>
+        <h:outputText value="#{a.name}"/>
+      </h:column>
+
+      <h:column>
+        <f:facet name="header">Username</f:facet>
+        <h:outputText value="#{a.user.username}"/>
+      </h:column>
+
+      <h:column>
+        <f:facet name="header">Actions</f:facet>
+        <h:commandLink value="Edit"
+                       action="#{adminAgentController.prepareEdit(a)}"
+                       styleClass="btn btn-sm btn-primary me-2">
+          <f:ajax render="agentListForm"/>
+        </h:commandLink>
+        <h:commandLink value="Delete"
+                       action="#{adminAgentController.deleteAgent(a)}"
+                       onclick="return confirm('Delete this agent?');"
+                       styleClass="btn btn-sm btn-danger">
+          <f:ajax render="agentListForm"/>
+        </h:commandLink>
+      </h:column>
+
+    </h:dataTable>
+  </h:form>
+  <br/>
+  <h:form>
+    <h:commandButton value="Add New Agent"
+                     action="createAgent.xhtml?faces-redirect=true"
+                     styleClass="btn btn-primary"/>
+  </h:form>
+</ui:define>
+</ui:composition>
